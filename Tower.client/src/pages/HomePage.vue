@@ -3,7 +3,7 @@
   <!-- SECTION HEADING AND PROMO CARD -->
   <div class="row">
     <h1 class="ms-2">Tower</h1>
-    <div class="col-12 col-md-11 m-auto mb-5 ms-2 p-2 bg-secondary rounded elevation-5">
+    <div class="col-12 col-md-11 m-auto mb-5 p-2 bg-secondary rounded elevation-5">
       <div class="ms-2">
         <h3>Beat the scalpers</h3>
         <h3>Beat the lines</h3>
@@ -59,7 +59,7 @@ export default {
     })
     return {
       filterBy,
-
+      
       towerEvents: computed(() => {
         if (filterBy.value == '') {
           return AppState.towerEvents

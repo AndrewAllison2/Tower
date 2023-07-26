@@ -40,24 +40,30 @@
 
 <script>
 import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import Pop from "../utils/Pop.js";
 import { towerEventsService } from "../services/TowerEventsService.js";
 import { logger } from "../utils/Logger.js";
+import { Modal } from "bootstrap";
 
 export default {
   setup() {
     const editable = ref({})
-    const router = useRoute()
+    const router = useRouter()
     return {
       editable,
       types: ['concert', 'convention', 'sport', 'digital'],
+
+      
 
       async createTowerEvent() {
         try {
           logger.log('creating event')
           const eventData = editable.value
           const towerEvent = await towerEventsService.createTowerEvent(eventData)
+          editable.value = {}
+          Modal.getOrCreateInstance('#exampleModal').hide()
+          router.push({name:'TowerEvent', params: {eventId: towerEvent.id}})
         } catch (error) {
           Pop.error(error.message)
         }

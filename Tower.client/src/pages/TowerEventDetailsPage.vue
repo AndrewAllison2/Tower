@@ -10,6 +10,18 @@
           </div>
 
           <div class="col-12 col-md-6 mt-2">
+            <div class="d-flex justify-content-end mb-3">
+              <div class="dropdown">
+  <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="mdi mdi-pencil"></i>
+  </button>
+  <ul class="dropdown-menu">
+    <li><a class="dropdown-item" @click="editTowerEvent()">Edit Tower</a></li>
+    <li><a class="dropdown-item" @click="cancelTowerEvent()" >Cancel Tower</a></li>
+   
+  </ul>
+</div>
+            </div>
             <div class="d-flex justify-content-between align-items-center">
               <h4>{{ towerEvent.name }}</h4>
               <h5>{{ towerEvent.startDate }}</h5>
@@ -48,6 +60,7 @@ import Pop from "../utils/Pop.js";
 import { towerEventsService } from "../services/TowerEventsService.js";
 import { computed, onMounted } from "vue";
 import {AppState} from "../AppState.js"
+import { logger } from "../utils/Logger.js";
 
 
 
@@ -71,7 +84,21 @@ export default {
     return {
       towerEvent: computed(() => AppState.activeTowerEvent),
 
-      
+      async cancelTowerEvent() {
+        try {
+          logger.log('cancelling event')
+        } catch (error) {
+          Pop.error(error.message)
+        }
+      },
+
+      async editTowerEvent() {
+        try {
+          logger.log('editing tower')
+        } catch (error) {
+          Pop.error(error.message)
+        }
+      }
     }
   }
 }
