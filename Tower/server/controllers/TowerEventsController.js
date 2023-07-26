@@ -12,6 +12,7 @@ export class TowerEventsController extends BaseController {
       .use(Auth0Provider.getAuthorizedUserInfo)
       .post('', this.createTowerEvent)
       .put('/:eventId', this.editEvent)
+      .delete('/:eventId', this.cancelEvent)
   }
 
   async getTowerEvents(req, res, next) {
@@ -60,7 +61,7 @@ export class TowerEventsController extends BaseController {
   async cancelEvent(req, res, next) {
     try {
       const eventId = req.params.eventId
-      const userId = req.userId.id
+      const userId = req.userInfo.id
       const removedEvent = await towerEventsService.cancelEvent(eventId, userId)
       res.send(removedEvent)
     } catch (error) {

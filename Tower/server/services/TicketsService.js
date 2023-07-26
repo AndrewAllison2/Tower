@@ -1,6 +1,10 @@
+import { dbContext } from "../db/DbContext.js"
+
 class TicketsService {
-  createdTicket(ticketData) {
-    throw new Error("Method not implemented.");
+  async createdTicket(ticketData) {
+    const newTicket = await dbContext.Tickets.create(ticketData)
+    newTicket.populate('profile')
+    return newTicket
   }
 }
 

@@ -45,9 +45,9 @@ class TowerEventsService {
 
 
 
-    await originalEvent.save(editData.name, editData.description)
+    const cancelledEvent = await originalEvent.save()
 
-    return originalEvent
+    return cancelledEvent
   }
 
 
@@ -55,9 +55,6 @@ class TowerEventsService {
     const eventToCancel = await this.getEventById(eventId)
     if (eventToCancel.creatorId.toString() != userId) {
       throw new Forbidden('You are not the creator of this Tower. You cannot delete it.')
-    }
-    if (eventToCancel.isCanceled = true) {
-      throw new BadRequest('You cannot edit a Tower once it has been canceled.')
     }
     eventToCancel.isCanceled = true
     await eventToCancel.save()
