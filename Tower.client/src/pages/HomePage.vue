@@ -1,41 +1,67 @@
 <template>
-  <div class="home flex-grow-1 d-flex flex-column align-items-center justify-content-center">
-    <div class="home-card p-5 bg-white rounded elevation-3">
-      <img src="https://bcw.blob.core.windows.net/public/img/8600856373152463" alt="CodeWorks Logo"
-        class="rounded-circle">
-      <h1 class="my-5 bg-dark text-white p-3 rounded text-center">
-        Vue 3 Starter
-      </h1>
+<div class="container-fluid">
+  <!-- SECTION HEADING AND PROMO CARD -->
+  <div class="row">
+    <h1 class="ms-2">Tower</h1>
+    <div class="col-12 col-md-11 m-auto mb-5 ms-2 p-2 bg-secondary rounded elevation-5">
+      <div class="ms-2">
+        <h3>Beat the scalpers</h3>
+        <h3>Beat the lines</h3>
+        <h3>Real Events for Real People</h3>
+      </div>
     </div>
   </div>
+  <!-- SECTION FILTER BUTTONS -->
+  <div class="row">
+    <div class="col-12 col-md-10 m-auto mb-3">
+      <div class="d-flex justify-content-around">
+        <h5 class="selectable">Concert</h5>
+        <h5 class="selectable">Convention</h5>
+        <h5 class="selectable">Sport</h5>
+        <h5 class="selectable">Digital</h5>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION EVENT CARDS -->
+  <div class="row">
+    <div class="col-12 col-md-3 mb-3" v-for="towerEvent in towerEvents" :key="towerEvent.id">
+      
+        <EventCard :towerEventProp="towerEvent" />
+      
+    </div>
+  </div>
+</div>
 </template>
 
 <script>
+import Pop from "../utils/Pop.js";
+import { towerEventsService } from '../services/TowerEventsService.js'
+import { computed, onMounted } from "vue";
+import { AppState } from "../AppState.js";
+
+
 export default {
   setup() {
-    return {}
+
+    async function getEvents() {
+      try {
+        await towerEventsService.getEvents()
+      } catch (error) {
+        Pop.error(error.message)
+      }
+    }
+
+    onMounted(() => {
+      getEvents()
+    })
+    return {
+      towerEvents: computed(()=> AppState.towerEvents)
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.home {
-  display: grid;
-  height: 80vh;
-  place-content: center;
-  text-align: center;
-  user-select: none;
 
-  .home-card {
-    width: 50vw;
-
-    >img {
-      height: 200px;
-      max-width: 200px;
-      width: 100%;
-      object-fit: contain;
-      object-position: center;
-    }
-  }
-}
 </style>

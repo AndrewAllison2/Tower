@@ -5,10 +5,12 @@
   <main>
     <router-view />
   </main>
-   <footer class="bg-dark text-light">
-    Made with 💖 by CodeWorks
+   <footer>
+    
   </footer>
 </template>
+
+
 
 <script>
 import { computed } from 'vue'
