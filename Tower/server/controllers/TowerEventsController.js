@@ -2,13 +2,17 @@ import { Auth0Provider } from "@bcwdev/auth0provider";
 import BaseController from "../utils/BaseController.js";
 import { towerEventsService } from "../services/TowerEventsService.js";
 import { BadRequest } from "../utils/Errors.js";
+import { ticketsService } from "../services/TicketsService.js";
+import { commentsService } from "../services/CommentsService.js";
 
 export class TowerEventsController extends BaseController {
   constructor() {
     super('api/events')
     this.router
       .get('', this.getTowerEvents)
+      .get('/:eventId/tickets', this.getTicketsByEventId)
       .get('/:eventId', this.getEventById)
+      .get('/:eventId/comments', this.getCommentsByEventId)
       .use(Auth0Provider.getAuthorizedUserInfo)
       .post('', this.createTowerEvent)
       .put('/:eventId', this.editEvent)
@@ -68,4 +72,25 @@ export class TowerEventsController extends BaseController {
       next(error)
     }
   }
+
+  async getTicketsByEventId(req, res, next) {
+    try {
+      const eventId = req.params.eventId
+      const tickets = await ticketsService.getTicketsByEventId(eventId)
+      res.send(tickets)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async getCommentsByEventId(req, res, next) {
+    try {
+      const eventId = req.params.eventId
+      const comments = await commentsService.getCommentsByEventId(eventId)
+      res.send(comments)
+    } catch (error) {
+      next(error)
+    }
+  }
+
 }
