@@ -15,10 +15,11 @@
   <div class="row">
     <div class="col-12 col-md-10 m-auto mb-3">
       <div class="d-flex justify-content-around">
-        <h5 class="selectable">Concert</h5>
-        <h5 class="selectable">Convention</h5>
-        <h5 class="selectable">Sport</h5>
-        <h5 class="selectable">Digital</h5>
+        <h5 class="selectable" @click="filterBy = ''">All</h5>
+        <h5 class="selectable" @click="filterBy = 'concert'">Concert</h5>
+        <h5 class="selectable" @click="filterBy = 'convention'">Convention</h5>
+        <h5 class="selectable" @click="filterBy = 'sport'">Sport</h5>
+        <h5 class="selectable" @click="filterBy = 'digital'">Digital</h5>
       </div>
     </div>
   </div>
@@ -37,12 +38,13 @@
 <script>
 import Pop from "../utils/Pop.js";
 import { towerEventsService } from '../services/TowerEventsService.js'
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { AppState } from "../AppState.js";
 
 
 export default {
   setup() {
+    const filterBy = ref('')
 
     async function getEvents() {
       try {
@@ -56,7 +58,17 @@ export default {
       getEvents()
     })
     return {
-      towerEvents: computed(()=> AppState.towerEvents)
+      filterBy,
+
+      towerEvents: computed(() => {
+        if (filterBy.value == '') {
+          return AppState.towerEvents
+        } else {
+          return AppState.towerEvents.filter(a => a.type == filterBy.value)
+        }
+      })
+
+
     }
   }
 }

@@ -18,6 +18,11 @@ class TowerEventsService {
     const towerEvent = new TowerEvent(res.data)
     AppState.activeTowerEvent = towerEvent
   }
+
+  async createTowerEvent(eventData) {
+    const res = await api.post('api/events', eventData)
+    logger.log('new event!', res.data)
+  }
 }
 
 

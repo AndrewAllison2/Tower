@@ -8,12 +8,14 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        ...
+        
+        <CreateEventForm />
+
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+      <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Discard Post</button>
+        <button type="button" class="btn btn-primary">Create Post</button>
+      </div> -->
     </div>
   </div>
 </div>
@@ -24,7 +26,9 @@
 <script>
 export default {
   setup(){
-    return {}
+    return {
+      
+    }
   }
 }
 </script>
