@@ -4,42 +4,50 @@
       <h1>Tower</h1>
       <h4 class="text-center mt-4">My Events</h4>
       <div class="col-12 col-md-3">
+      </div>
         
-        <div >
+        </div>
+
 <!-- for every event where user id == creator id, draw the event card -->
 
-          My events go here
-        </div>
       </div>
-    </div>
+    
 
     <div class="row">
       <div class="col-12 col-md-8 m-auto">
-        <div class="" v-for="ticket in myTickets" :key="ticket.id">
-          <EventCard :towerEventProp="towerEvent" />
+        <div class="" v-for="ticket in myTickets" :key="ticket.id" :towerEvent="ticket.event">
+          <!-- <div class="card elevation-4 p-2 card-container mt-3">
+            <img class="img-fluid event-cover-img" :src="towerEvent.coverImg" alt="">
+            <div class="card-info text-center rounded p-3">
+              {{ towerEvent.name }}
+            </div>
+          </div> -->
+          <MyEventsCard :towerEventProp="ticket.event"/>
         </div>
       </div>
     </div>
-  </div>
+  
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { AppState } from '../AppState';
-import { useRoute } from "vue-router";
-import TicketComponent from "../components/TicketComponent.vue";
+import MyEventsCard from "../components/MyEventsCard.vue";
 
 export default {
-    setup() {
-    return {
+  setup() {
 
-      myTickets: computed(()=> AppState.myTickets),
-      account: computed(() => AppState.account),
-      towerEvent: computed(() => AppState.towerEvents),
+    onMounted(() => {
       
+    })
+    
+        return {
+            myTickets: computed(() => AppState.myTickets),
+            account: computed(() => AppState.account),
+            towerEvent: computed(() => AppState.towerEvents),
         };
     },
-
+    // components: { EventCard }
 }
 </script>
 

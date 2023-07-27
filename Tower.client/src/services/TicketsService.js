@@ -12,6 +12,7 @@ class TicketsService {
       const res = await api.get('account/tickets')
       logger.log('got my tickets', res.data)
       AppState.myTickets = res.data.map(t => new Ticket(t))
+      logger.log('my tickets in the appstate', AppState.myTickets)
     } catch (error) {
       Pop.error(error.message)
     }
@@ -27,6 +28,11 @@ class TicketsService {
     const res = await api.post('api/tickets', ticketData)
     logger.log('got a ticket', res.data)
     AppState.tickets.push(new Ticket(res.data))
+  }
+
+  async removeTicket(ticketId) {
+    const res = await api.delete(`api/tickets/${ticketId}`)
+    logger.log('deleting ticket', res.data)
   }
 
 
