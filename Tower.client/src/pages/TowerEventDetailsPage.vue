@@ -18,7 +18,7 @@
   <ul class="dropdown-menu">
     <li><a class="dropdown-item" @click="editTowerEvent()">Edit Tower</a></li>
     <li><a class="dropdown-item" @click="cancelTowerEvent()" >Cancel Tower</a></li>
-   
+  
   </ul>
 </div>
             </div>
@@ -30,8 +30,17 @@
             <p class="mt-3">{{ towerEvent.description }}</p>
 
             <div class="d-flex justify-content-between align-items-center">
-              <h5>{{ towerEvent.capacity }}</h5>
-              <button class="btn btn-success">Attend Event</button>
+<!-- TODO FIX LOGIC TO SHOW TKTS REMAINING -->
+              <h5>{{ towerEvent.capacity}} - {{ towerEvent.ticketCount }}</h5>
+              <div>
+                <div v-if="towerEvent.ticketCount > 0 && towerEvent.ticketCount < towerEvent.capacity && towerEvent.isCanceled == false">
+                  <button class="btn btn-success">Attend Event</button>
+                </div>
+                <div class="text-danger">
+                  <h4 v-if="towerEvent.isCanceled == true">Cancelled</h4>
+                  <h4 v-else >No Tickets Remaining</h4>
+              </div>
+
             </div>
           </div>
           </div>
@@ -49,6 +58,7 @@
         </div>
         
       </div>
+    </div>
     </div>
 
 </template>
