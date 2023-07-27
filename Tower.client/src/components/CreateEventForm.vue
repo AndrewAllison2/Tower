@@ -50,6 +50,7 @@ export default {
   setup() {
     const editable = ref({})
     const router = useRouter()
+  
     return {
       editable,
       types: ['concert', 'convention', 'sport', 'digital'],

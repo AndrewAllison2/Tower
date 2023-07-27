@@ -23,7 +23,7 @@
 </div>
             </div>
             <div class="d-flex justify-content-between align-items-center">
-              <h4>{{ towerEvent.name }}</h4>
+              <h4>{{towerEvent.name }}</h4>
               <h5>{{ towerEvent.startDate }}</h5>
             </div>
             <h5 class="mt-3">{{ towerEvent.location }}</h5>
@@ -33,8 +33,11 @@
 <!-- TODO FIX LOGIC TO SHOW TKTS REMAINING -->
               <h5>{{ towerEvent.capacity}} - {{ towerEvent.ticketCount }}</h5>
               <div>
-                <div v-if="towerEvent.ticketCount > 0 && towerEvent.ticketCount < towerEvent.capacity && towerEvent.isCanceled == false">
-                  <button class="btn btn-success">Attend Event</button>
+
+                <!-- v-if="towerEvent.ticketCount > 0 && towerEvent.ticketCount < towerEvent.capacity && towerEvent.isCanceled == false -->
+
+                <div>
+                  <button @click="createTicket()" class="btn btn-success">Attend Event</button>
                 </div>
                 <div class="text-danger">
                   <h4 v-if="towerEvent.isCanceled == true">Cancelled</h4>
@@ -68,14 +71,20 @@
 import { useRoute } from "vue-router";
 import Pop from "../utils/Pop.js";
 import { towerEventsService } from "../services/TowerEventsService.js";
-import { computed, onMounted } from "vue";
+import { computed, onMounted, onUpdated, watchEffect } from "vue";
 import {AppState} from "../AppState.js"
 import { logger } from "../utils/Logger.js";
+import { TowerEvent } from "../models/TowerEvent.js";
+import {ticketsService} from '../services/TicketsService.js'
 
 
 
 export default {
+  props: {
+    towerEventProp: {type: TowerEvent}
+  },
   setup() {
+    
     const route = useRoute()
 
     async function getEventById(){
@@ -87,16 +96,41 @@ export default {
       }
     }
 
+    async function getTicketsByEventId() {
+      try {
+        const eventId = route.params.eventId
+        await ticketsService.getTicketsByEventId(eventId)
+      } catch (error) {
+        Pop.error(error.message)
+      }
+    }
+
     onMounted(() => {
       getEventById()
+      getTicketsByEventId()
+    })
+
+
+    watchEffect(() => {
+      getEventById(route.params.eventId)
+
     })
 
     return {
       towerEvent: computed(() => AppState.activeTowerEvent),
+      account: computed(()=> AppState.account),
+      
 
       async cancelTowerEvent() {
         try {
-          logger.log('cancelling event')
+          const wantsToRemove = await Pop.confirm(`Are you sure you want to remove this Tower?`)
+
+          if (!wantsToRemove) {
+            return
+          }
+          const eventId = this.towerEvent.id 
+          
+          await towerEventsService.cancelTowerEvent(eventId)
         } catch (error) {
           Pop.error(error.message)
         }
@@ -105,6 +139,19 @@ export default {
       async editTowerEvent() {
         try {
           logger.log('editing tower')
+        } catch (error) {
+          Pop.error(error.message)
+        }
+      },
+
+      async createTicket() {
+        try {
+          
+          const activeTowerId = route.params.eventId
+        const ticketData = {eventId: activeTowerId}
+
+          await ticketsService.createTicket(ticketData)
+          AppState.activeTowerEvent.ticketCount ++
         } catch (error) {
           Pop.error(error.message)
         }
