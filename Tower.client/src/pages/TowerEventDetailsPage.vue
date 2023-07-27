@@ -12,10 +12,10 @@
           <div class="col-12 col-md-6 mt-2">
             <div class="d-flex justify-content-end mb-3">
               <div class="dropdown">
-  <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+  <button v-if="towerEvent.creatorId == account.id" class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
     <i class="mdi mdi-pencil"></i>
   </button>
-  <ul class="dropdown-menu">
+  <ul  class="dropdown-menu">
     <li><a class="dropdown-item" @click="editTowerEvent()">Edit Tower</a></li>
     <li><a class="dropdown-item" @click="cancelTowerEvent()" >Cancel Tower</a></li>
   
@@ -34,30 +34,53 @@
               <h5>{{ towerEvent.capacity}} - {{ towerEvent.ticketCount }}</h5>
               <div>
 
-                <!-- v-if="towerEvent.ticketCount > 0 && towerEvent.ticketCount < towerEvent.capacity && towerEvent.isCanceled == false -->
-
-                <div>
-                  <button @click="createTicket()" class="btn btn-success">Attend Event</button>
+                
+                <div v-if="towerEvent.isCanceled == true">
+                  <h4 class="text-danger" >Cancelled</h4>
                 </div>
-                <div class="text-danger">
-                  <h4 v-if="towerEvent.isCanceled == true">Cancelled</h4>
-                  <h4 v-else >No Tickets Remaining</h4>
-              </div>
+                <div v-else>
+                    <div v-if="-1 < towerEvent.ticketCount && towerEvent.ticketCount < towerEvent.capacity">
+                      <button @click="createTicket()" class="btn btn-success">Attend Event</button>
+                    </div>
+                    <div v-else>
+                      <h4>No Tickets Remaining</h4>
+                    </div>
+                  </div>
+                
+                
 
             </div>
           </div>
           </div>
         </div>
 
-        <div class="col-12 col-md-11 m-auto mt-4 bg bg-secondary rounded elevation-4">
+        <div class="col-12 col-md-11 m-auto mt-4 mb-4 bg bg-secondary rounded elevation-4">
           <h5 class="p-2 text-center">Who is attending</h5>
-          <div>
-            <p>Attending users go here</p>
+          <div >
+            <img class="img-fluid avatar" v-for="t in tickets" :key="t.id" :src="t.profile?.picture" :alt="t.profile.name" :title="t.profile.name">
           </div>
         </div>
 
-        <div class="col-12 col-md-8 m-auto bg bg-secondary mt-5 p-3">
-          Comment Section
+        <div v-if="towerEvent.isCanceled != true" class="col-12 col-md-8 m-auto mb-4 rounded bg bg-secondary mt-5 p-3">
+          <div>
+            <div class="d-flex justify-content-between">
+              <h5>What people are saying</h5>
+              <button type="submit" @click="createComment()" class="btn btn-primary">Create Comment</button>
+            </div>
+            <form>
+              <label for="body">Join the conversation...</label>
+              <textarea class="comment-input" v-model="editable.body" name="body" id="body"></textarea>
+            </form>
+          </div>
+
+          <div v-for="comment in comments" :key="comment.id">
+            <div class="d-flex align-items-center">
+              <img class="img-fluid avatar" :src="comment.creator.picture" :title="comment.creator.name" alt="">
+              <div class="ms-3 bg bg-light mt-4 rounded elevation-5 p-2">
+                <p>{{ comment.body }}</p>
+              </div>
+            </div>
+          </div>
         </div>
         
       </div>
@@ -71,11 +94,12 @@
 import { useRoute } from "vue-router";
 import Pop from "../utils/Pop.js";
 import { towerEventsService } from "../services/TowerEventsService.js";
-import { computed, onMounted, onUpdated, watchEffect } from "vue";
+import { computed, onMounted, popScopeId, ref, watchEffect } from "vue";
 import {AppState} from "../AppState.js"
 import { logger } from "../utils/Logger.js";
 import { TowerEvent } from "../models/TowerEvent.js";
 import {ticketsService} from '../services/TicketsService.js'
+import {commentsService} from '../services/CommentsService.js'
 
 
 
@@ -83,7 +107,9 @@ export default {
   props: {
     towerEventProp: {type: TowerEvent}
   },
+  
   setup() {
+    const editable = ref({})
     
     const route = useRoute()
 
@@ -105,20 +131,36 @@ export default {
       }
     }
 
+    async function getCommentsByEventId() {
+      try {
+        const eventId = route.params.eventId
+        await commentsService.getCommentsByEventId(eventId)
+      } catch (error) {
+        Pop.error(error.message)
+      }
+    }
+
     onMounted(() => {
       getEventById()
+      getCommentsByEventId()
       getTicketsByEventId()
+      
     })
 
 
     watchEffect(() => {
       getEventById(route.params.eventId)
+      getTicketsByEventId()
+      getCommentsByEventId()
 
     })
 
     return {
+      editable,
       towerEvent: computed(() => AppState.activeTowerEvent),
-      account: computed(()=> AppState.account),
+      account: computed(() => AppState.account),
+      tickets: computed(() => AppState.tickets),
+      comments: computed(()=> AppState.comments),
       
 
       async cancelTowerEvent() {
@@ -128,7 +170,7 @@ export default {
           if (!wantsToRemove) {
             return
           }
-          const eventId = this.towerEvent.id 
+          const eventId = this.towerEvent.id
           
           await towerEventsService.cancelTowerEvent(eventId)
         } catch (error) {
@@ -155,7 +197,19 @@ export default {
         } catch (error) {
           Pop.error(error.message)
         }
+      },
+
+      async createComment() {
+        try {
+          const commentData = editable.value
+          commentData.eventId = route.params.eventId
+          await commentsService.createComment(commentData)
+          editable.value = {}
+        } catch (error) {
+          Pop.error(error.message)
+        }
       }
+
     }
   }
 }
@@ -163,5 +217,14 @@ export default {
 
 
 <style lang="scss" scoped>
+.avatar{
+  height: 8vh;
+  width: 8vh;
+  border-radius: 50%;
+  padding: 5px;
+}
 
+.comment-input{
+  width: 100%;
+}
 </style>

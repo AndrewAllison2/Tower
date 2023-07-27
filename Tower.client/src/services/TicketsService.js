@@ -9,6 +9,7 @@ class TicketsService {
   async getTicketsByEventId(eventId) {
     const res = await api.get(`api/events/${eventId}/tickets`)
     logger.log('got tickets', res.data)
+    AppState.tickets = res.data.map(t => new Ticket(t))
 
   }
 
