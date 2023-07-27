@@ -10,18 +10,22 @@
           </div>
 
           <div class="col-12 col-md-6 mt-2">
-            <div class="d-flex justify-content-end mb-3">
-              <div class="dropdown">
-  <button v-if="towerEvent.creatorId == account.id" class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-    <i class="mdi mdi-pencil"></i>
-  </button>
-  <ul  class="dropdown-menu">
-    <li><a class="dropdown-item" @click="editTowerEvent()">Edit Tower</a></li>
-    <li><a class="dropdown-item" @click="cancelTowerEvent()" >Cancel Tower</a></li>
-  
-  </ul>
-</div>
-            </div>
+            <div>
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <i v-if="hasTicket" class="mdi mdi-ticket text-success fs-1"></i>
+              
+                <div class="dropdown">
+                  <button v-if="towerEvent.creatorId == account.id" class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="mdi mdi-pencil"></i>
+                  </button>
+                  <ul  class="dropdown-menu">
+                    <li><a class="dropdown-item" @click="editTowerEvent()">Edit Tower</a></li>
+                    <li><a class="dropdown-item" @click="cancelTowerEvent()" >Cancel Tower</a></li>
+                  </ul>
+                </div>
+              </div>
+              </div>
+            
             <div class="d-flex justify-content-between align-items-center">
               <h4>{{towerEvent.name }}</h4>
               <h5>{{ towerEvent.startDate }}</h5>
@@ -34,13 +38,14 @@
               <h5>{{ towerEvent.capacity}} - {{ towerEvent.ticketCount }}</h5>
               <div>
 
+
                 
                 <div v-if="towerEvent.isCanceled == true">
                   <h4 class="text-danger" >Cancelled</h4>
                 </div>
                 <div v-else>
                     <div v-if="-1 < towerEvent.ticketCount && towerEvent.ticketCount < towerEvent.capacity">
-                      <button @click="createTicket()" class="btn btn-success">Attend Event</button>
+                      <button :hidden="hasTicket" @click="createTicket()" class="btn btn-success">Attend Event</button>
                     </div>
                     <div v-else>
                       <h4>No Tickets Remaining</h4>
@@ -54,14 +59,17 @@
           </div>
         </div>
 
-        <div class="col-12 col-md-11 m-auto mt-4 mb-4 bg bg-secondary rounded elevation-4">
-          <h5 class="p-2 text-center">Who is attending</h5>
-          <div >
-            <img class="img-fluid avatar" v-for="t in tickets" :key="t.id" :src="t.profile?.picture" :alt="t.profile.name" :title="t.profile.name">
+        <div>
+          <div v-if="towerEvent?.isCanceled != true" class="col-12 col-md-11 m-auto mt-4 mb-4 bg bg-secondary rounded elevation-4">
+            <h5 class="p-2 text-center">Who is attending</h5>
+            <div >
+              <img class="img-fluid avatar" v-for="t in tickets" :key="t.id" :src="t.profile?.picture" :alt="t.profile.name" :title="t.profile.name">
+            </div>
           </div>
         </div>
 
-        <div v-if="towerEvent.isCanceled != true" class="col-12 col-md-8 m-auto mb-4 rounded bg bg-secondary mt-5 p-3">
+
+        <div v-if="towerEvent?.isCanceled != true" class="col-12 col-md-8 m-auto mb-4 rounded bg bg-secondary mt-5 p-3">
           <div>
             <div class="d-flex justify-content-between">
               <h5>What people are saying</h5>
@@ -74,11 +82,14 @@
           </div>
 
           <div v-for="comment in comments" :key="comment.id">
-            <div class="d-flex align-items-center">
+            <div class="d-flex justify-content-between align-items-center">
               <img class="img-fluid avatar" :src="comment.creator.picture" :title="comment.creator.name" alt="">
-              <div class="ms-3 bg bg-light mt-4 rounded elevation-5 p-2">
-                <p>{{ comment.body }}</p>
+              <div class="ms-5 bg bg-light mt-4 rounded m-auto comment-card elevation-5 p-2">
+                <p class="m-0 p-1">{{ comment.body }}</p>
+                <div>
+                </div>
               </div>
+              <i v-if="comment.creatorId == account.id" @click="removeComment(comment.id)" class="selectable mdi mdi-delete "></i>
             </div>
           </div>
         </div>
@@ -160,7 +171,10 @@ export default {
       towerEvent: computed(() => AppState.activeTowerEvent),
       account: computed(() => AppState.account),
       tickets: computed(() => AppState.tickets),
-      comments: computed(()=> AppState.comments),
+      comments: computed(() => AppState.comments),
+      hasTicket: computed(()=> {
+        return AppState.tickets.find(t=> t.accountId == AppState.account.id)
+      }),
       
 
       async cancelTowerEvent() {
@@ -208,6 +222,19 @@ export default {
         } catch (error) {
           Pop.error(error.message)
         }
+      },
+
+      async removeComment(commentId) {
+        try {
+          const wantsToRemove = await Pop.confirm('Are you sure you want to delete this comment?')
+          if (!wantsToRemove) {
+            return
+          }
+          
+          await commentsService.removeComment(commentId)
+        } catch (error) {
+          Pop.error(error.message)
+        }
       }
 
     }
@@ -226,5 +253,9 @@ export default {
 
 .comment-input{
   width: 100%;
+}
+
+.comment-card{
+  width: 75%;
 }
 </style>
