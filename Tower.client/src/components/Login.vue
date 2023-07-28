@@ -15,9 +15,12 @@
           <div class="list-group">
             <router-link :to="{ name: 'Account' }">
               <div class="list-group-item dropdown-item list-group-item-action">
-                Manage Account
+                My Account
               </div>
             </router-link>
+            <li>
+              <button :hidden="!account.id" type="button" class="btn text-light text-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">Create Event</button>
+            </li>
             <div class="list-group-item dropdown-item list-group-item-action text-danger selectable" @click="logout">
               <i class="mdi mdi-logout"></i>
               logout

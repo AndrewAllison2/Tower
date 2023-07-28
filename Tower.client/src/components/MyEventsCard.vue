@@ -1,33 +1,46 @@
 <template>
-  <div class="card elevation-4 p-2 card-container mt-4">
+  
+  <div class="card elevation-4 p-2 card-container mt-4 mb-3">
             <img class="img-fluid event-cover-img" :src="towerEventProp.coverImg" alt="">
-            <div class="card-info d-flex justify-content-between rounded p-3">
-              {{ towerEventProp.name }}
-              <button @click="removeTicket()" type="button" class="btn btn-danger"><i class="mdi mdi-delete"></i></button>
+            <div class="card-info d-flex justify-content-between align-items-center rounded p-3">
+              <h3>{{ towerEventProp.name }}</h3>
+              <div class="d-flex align-items-center">
+                <button title="Delete Ticket" @click="deleteTicket(ticketProp.id)" type="button" class="btn btn-danger"><i class="mdi mdi-delete" ></i></button>
+                <router-link :to="{name: 'TowerEvent', params: {eventId: towerEventProp.id}}"><i class="mdi mdi-run ms-3 fs-3 bg bg-primary rounded"
+                  title="To Tower details"></i></router-link>
+              </div>
             </div>
           </div>
+          
 </template>
 
 
 <script>
+import { computed, watchEffect } from "vue";
 import { AppState } from "../AppState.js";
-import { TowerEvent } from "../models/TowerEvent.js";
 import { ticketsService } from "../services/TicketsService.js";
 import Pop from "../utils/Pop.js";
 
 
 export default {
   props: {
-    towerEventProp: { type: TowerEvent, required: true },
+    towerEventProp: { type: Object, required: true },
+    ticketProp: {type: Object, required: true}
+  },
 
-    setup() {
+  setup(props) {
+    
       return {
+        
+        tickets: computed(() => AppState.tickets),
+        myTickets: computed(()=> AppState.myTickets),
 
-        async removeTicket() {
+        async deleteTicket() {
           try {
-            const ticketToRemove = AppState.tickets.find(t => t.accountId == AppState.account.id)
-            const ticketId = ticketToRemove.id
-            await ticketsService.removeTicket(ticketId)
+            if (await Pop.confirm()) {
+              const ticketId = props.ticketProp.id
+              await ticketsService.removeTicket(ticketId)
+            }
           } catch (error) {
             Pop.error(error.message)
           }
@@ -36,7 +49,7 @@ export default {
       }
     }
   }
-}
+
 </script>
 
 

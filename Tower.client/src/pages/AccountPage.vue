@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <h1>Tower</h1>
+      <h1 class="ms-2 mt-2">Tower</h1>
       <h4 class="text-center mt-4">My Events</h4>
       <div class="col-12 col-md-3">
       </div>
@@ -22,7 +22,7 @@
               {{ towerEvent.name }}
             </div>
           </div> -->
-          <MyEventsCard :towerEventProp="ticket.event"/>
+          <MyEventsCard :towerEventProp="ticket.event" :ticketProp="ticket"/>
         </div>
       </div>
     </div>
@@ -30,9 +30,10 @@
 </template>
 
 <script>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, watchEffect } from 'vue';
 import { AppState } from '../AppState';
 import MyEventsCard from "../components/MyEventsCard.vue";
+import TowerEventDetailsPage from "./TowerEventDetailsPage.vue";
 
 export default {
   setup() {
@@ -40,11 +41,11 @@ export default {
     onMounted(() => {
       
     })
-    
         return {
             myTickets: computed(() => AppState.myTickets),
             account: computed(() => AppState.account),
-            towerEvent: computed(() => AppState.towerEvents),
+          towerEvent: computed(() => AppState.towerEvents),
+          tickets: computed(() => AppState.tickets)
         };
     },
     // components: { EventCard }

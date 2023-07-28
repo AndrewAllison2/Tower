@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <h1>Tower</h1>
+      <h1 class="ms-2 mt-2">Tower</h1>
       <div class="col-12 col-md-11 m-auto bg bg-info rounded elevation-4">
         
         <div v-if="towerEvent" class="row">
@@ -12,14 +12,14 @@
           <div class="col-12 col-md-6 mt-2">
             <div>
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <i v-if="hasTicket" class="mdi mdi-ticket text-success fs-1"></i>
+                <i v-if="hasTicket" class="mdi mdi-ticket text-success fs-1" title="You have a ticket for this event!"></i>
               
                 <div class="dropdown">
-                  <button v-if="towerEvent.creatorId == account.id" class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="mdi mdi-pencil"></i>
+                  <button v-if="towerEvent.creatorId == account.id && !towerEvent.isCanceled" class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Tower Options">
+                    <i class="mdi mdi-cancel"></i>
                   </button>
                   <ul  class="dropdown-menu">
-                    <li><a class="dropdown-item" @click="editTowerEvent()">Edit Tower</a></li>
+                    <!-- <li><a class="dropdown-item" @click="editTowerEvent()">Edit Tower</a></li> -->
                     <li><a class="dropdown-item" @click="cancelTowerEvent()" >Cancel Tower</a></li>
                   </ul>
                 </div>
@@ -28,7 +28,7 @@
             
             <div class="d-flex justify-content-between align-items-center">
               <h4>{{towerEvent.name }}</h4>
-              <h5>{{ towerEvent.startDate }}</h5>
+              <h5>{{ formattedDate }}</h5>
             </div>
             <h5 class="mt-3">{{ towerEvent.location }}</h5>
             <p class="mt-3">{{ towerEvent.description }}</p>
@@ -44,7 +44,7 @@
                 </div>
                 <div v-else>
                     <div v-if="-1 < towerEvent.ticketCount && towerEvent.ticketCount < towerEvent.capacity">
-                      <button :hidden="hasTicket" @click="createTicket()" class="btn btn-success">Attend Event</button>
+                      <button :hidden="hasTicket || !account.id" @click="createTicket()" class="btn btn-success">Attend Event</button>
                     </div>
                     <div v-else>
                       <h4>No Tickets Remaining</h4>
@@ -68,15 +68,15 @@
         </div>
 
 
-        <div v-if="towerEvent?.isCanceled != true" class="col-12 col-md-8 m-auto mb-4 rounded bg bg-secondary mt-5 p-3">
+        <div v-if="towerEvent?.isCanceled != true" :hidden="!account.id" class="col-12 col-md-8 m-auto mb-4 rounded bg bg-secondary mt-5 p-3">
           <div>
             <div class="d-flex justify-content-between">
               <h5>What people are saying</h5>
-              <button type="submit" @click="createComment()" class="btn btn-primary">Create Comment</button>
+              <button :hidden="!account.id" type="submit" @click="createComment()" class="btn btn-primary">Create Comment</button>
             </div>
             <form>
               <label for="body">Join the conversation...</label>
-              <textarea class="comment-input" v-model="editable.body" name="body" id="body"></textarea>
+              <textarea class="comment-input mt-2" v-model="editable.body" name="body" id="body"></textarea>
             </form>
           </div>
 
@@ -104,9 +104,8 @@
 import { useRoute } from "vue-router";
 import Pop from "../utils/Pop.js";
 import { towerEventsService } from "../services/TowerEventsService.js";
-import { computed, onMounted, popScopeId, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
 import {AppState} from "../AppState.js"
-import { logger } from "../utils/Logger.js";
 import { TowerEvent } from "../models/TowerEvent.js";
 import {ticketsService} from '../services/TicketsService.js'
 import {commentsService} from '../services/CommentsService.js'
@@ -157,6 +156,10 @@ export default {
       
     })
 
+    onMounted(() => {
+      getTicketsByEventId()
+    })
+
 
     watchEffect(() => {
       getEventById(route.params.eventId)
@@ -177,6 +180,9 @@ export default {
       ticketsRemaining: computed(() => {
         return AppState.activeTowerEvent.capacity - AppState.activeTowerEvent.ticketCount
       }),
+      formattedDate: computed(() => {
+        return AppState.activeTowerEvent.createdAt.toLocaleDateString()
+      }),
       
 
       async cancelTowerEvent() {
@@ -189,14 +195,6 @@ export default {
           const eventId = this.towerEvent.id
           
           await towerEventsService.cancelTowerEvent(eventId)
-        } catch (error) {
-          Pop.error(error.message)
-        }
-      },
-
-      async editTowerEvent() {
-        try {
-          logger.log('editing tower')
         } catch (error) {
           Pop.error(error.message)
         }

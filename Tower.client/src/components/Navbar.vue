@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+  <nav class="navbar navbar-expand-lg navbar-dark nav-bar-color px-3">
     <router-link class="navbar-brand d-flex" :to="{ name: 'Home' }">
       <div class="d-flex flex-column align-items-center">
         Home
@@ -11,9 +11,9 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav me-auto">
-        <li>
-          <button type="button" class="btn text-light fs-5" data-bs-toggle="modal" data-bs-target="#exampleModal">Create Event</button>
-        </li>
+        <!-- <li>
+          <button :hidden="!account.id" type="button" class="btn text-light fs-5" data-bs-toggle="modal" data-bs-target="#exampleModal">Create Event</button>
+        </li> -->
       </ul>
 
 <ModalComponent/>
@@ -42,11 +42,15 @@
 </template>
 
 <script>
+import { computed } from "vue";
 import Login from './Login.vue';
 import ModalComponent from "./ModalComponent.vue";
+import { AppState } from "../AppState.js";
 export default {
   setup() {
-    return {}
+    return {
+      account: computed(()=> AppState.account)
+    }
   },
   components: { Login, ModalComponent }
 }
@@ -65,6 +69,10 @@ a:hover {
   border-bottom: 2px solid var(--bs-success);
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+}
+
+.nav-bar-color{
+  background-color: #0077a6;
 }
 
 @media screen and (min-width: 768px) {

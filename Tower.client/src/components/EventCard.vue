@@ -45,7 +45,7 @@ export default {
   background-color: aliceblue;
   top: 12em;
   opacity: 80%;
-  height: 4.7em;
+  height: 19%;
   width: 13.7em;
 }
 </style>
