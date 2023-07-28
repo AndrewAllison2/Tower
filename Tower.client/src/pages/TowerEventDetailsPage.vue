@@ -34,8 +34,7 @@
             <p class="mt-3">{{ towerEvent.description }}</p>
 
             <div class="d-flex justify-content-between align-items-center">
-<!-- TODO FIX LOGIC TO SHOW TKTS REMAINING -->
-              <h5>{{ towerEvent.capacity}} - {{ towerEvent.ticketCount }}</h5>
+              <h5>{{ ticketsRemaining }} tickets remaining</h5>
               <div>
 
 
@@ -174,6 +173,9 @@ export default {
       comments: computed(() => AppState.comments),
       hasTicket: computed(()=> {
         return AppState.tickets.find(t=> t.accountId == AppState.account.id)
+      }),
+      ticketsRemaining: computed(() => {
+        return AppState.activeTowerEvent.capacity - AppState.activeTowerEvent.ticketCount
       }),
       
 
