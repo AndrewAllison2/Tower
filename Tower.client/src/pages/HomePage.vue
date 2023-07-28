@@ -2,7 +2,7 @@
 <div class="container-fluid">
   <!-- SECTION HEADING AND PROMO CARD -->
   <div class="row">
-    <h1 class="ms-2 mt-2">Tower</h1>
+    <h1 class="mt-2">Tower</h1>
     <div class="col-12 col-md-11 m-auto mb-5 p-2 bg-secondary rounded elevation-5">
       <div class="ms-2">
         <h3>Beat the scalpers</h3>

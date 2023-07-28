@@ -15,7 +15,7 @@
 
     <div class="row">
       <div class="col-12 col-md-8 m-auto">
-        <div class="mx-2" v-for="ticket in myTickets" :key="ticket.id" :towerEvent="ticket.event">
+        <div class="" v-for="ticket in myTickets" :key="ticket.id" :towerEvent="ticket.event">
           <!-- <div class="card elevation-4 p-2 card-container mt-3">
             <img class="img-fluid event-cover-img" :src="towerEvent.coverImg" alt="">
             <div class="card-info text-center rounded p-3">
