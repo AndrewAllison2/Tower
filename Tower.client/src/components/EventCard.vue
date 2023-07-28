@@ -3,8 +3,8 @@
   <router-link :to="{name: 'TowerEvent', params: {eventId: towerEventProp.id}}">
     <div class="card elevation-4 p-2 card-container selectable">
             <img class="img-fluid event-cover-img" :src="towerEventProp.coverImg" alt="">
-            <div class="card-info text-center rounded p-3">
-              {{ towerEventProp.name }}
+            <div class="card-info text-center rounded p-3 m-auto">
+              <h5>{{ towerEventProp.name }}</h5>
             </div>
           </div>
   </router-link>
@@ -47,5 +47,11 @@ export default {
   opacity: 80%;
   height: 19%;
   width: 13.7em;
+}
+h5{
+  width: 10em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

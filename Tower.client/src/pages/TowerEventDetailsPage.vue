@@ -5,8 +5,8 @@
       <div class="col-12 col-md-11 m-auto bg bg-info rounded elevation-4">
         
         <div v-if="towerEvent" class="row">
-          <div  class="col-12 col-md-6 p-3">
-            <img  class='img-fluid rounded' :src="towerEvent.coverImg" alt="picture here">
+          <div  class="col-12 col-md-6">
+            <img  class='img-fluid cover-img p-3' :src="towerEvent.coverImg" alt="picture here">
           </div>
 
           <div class="col-12 col-md-6 mt-2">
@@ -27,11 +27,12 @@
               </div>
             
             <div class="d-flex justify-content-between align-items-center">
-              <h4>{{towerEvent.name }}</h4>
+              <h4 class="tower-name">{{towerEvent.name }}</h4>
               <h5>{{ formattedDate }}</h5>
             </div>
             <h5 class="mt-3">{{ towerEvent.location }}</h5>
             <p class="mt-3">{{ towerEvent.description }}</p>
+            <p>Capacity: {{ towerEvent.capacity }}</p>
 
             <div class="d-flex justify-content-between align-items-center">
               <h5>{{ ticketsRemaining }} tickets remaining</h5>
@@ -39,12 +40,12 @@
 
 
                 
-                <div v-if="towerEvent.isCanceled == true">
+                <div v-if="isCancelled == true">
                   <h4 class="text-danger" >Cancelled</h4>
                 </div>
                 <div v-else>
                     <div v-if="-1 < towerEvent.ticketCount && towerEvent.ticketCount < towerEvent.capacity">
-                      <button :hidden="hasTicket || !account.id" @click="createTicket()" class="btn btn-success">Attend Event</button>
+                      <button :hidden="hasTicket || !account.id ||isCancelled" @click="createTicket()" class="btn btn-success">Attend Event</button>
                     </div>
                     <div v-else>
                       <h4>No Tickets Remaining</h4>
@@ -59,7 +60,7 @@
         </div>
 
         <div>
-          <div v-if="towerEvent?.isCanceled != true" class="col-12 col-md-11 m-auto mt-4 mb-4 bg bg-secondary rounded elevation-4">
+          <div v-if="isCancelled != true" class="col-12 col-md-11 m-auto mt-4 mb-4 bg bg-secondary rounded elevation-4">
             <h5 class="p-2 text-center">Who is attending</h5>
             <div >
               <img class="img-fluid avatar" v-for="t in tickets" :key="t.id" :src="t.profile?.picture" :alt="t.profile.name" :title="t.profile.name">
@@ -68,7 +69,7 @@
         </div>
 
 
-        <div v-if="towerEvent?.isCanceled != true" :hidden="!account.id" class="col-12 col-md-8 m-auto mb-4 rounded bg bg-secondary mt-5 p-3">
+        <div v-if="isCancelled != true" :hidden="!account.id" class="col-12 col-md-8 m-auto mb-4 rounded bg bg-secondary mt-5 p-3">
           <div>
             <div class="d-flex justify-content-between">
               <h5>What people are saying</h5>
@@ -104,7 +105,7 @@
 import { useRoute } from "vue-router";
 import Pop from "../utils/Pop.js";
 import { towerEventsService } from "../services/TowerEventsService.js";
-import { computed, onMounted, ref, watchEffect } from "vue";
+import { computed, onMounted, onUpdated, ref, watchEffect } from "vue";
 import {AppState} from "../AppState.js"
 import { TowerEvent } from "../models/TowerEvent.js";
 import {ticketsService} from '../services/TicketsService.js'
@@ -156,8 +157,8 @@ export default {
       
     })
 
-    onMounted(() => {
-      getTicketsByEventId()
+    onUpdated(() => {
+      
     })
 
 
@@ -165,7 +166,7 @@ export default {
       getEventById(route.params.eventId)
       getTicketsByEventId()
       getCommentsByEventId()
-
+      // AppState.activeTowerEvent.isCanceled
     })
 
     return {
@@ -182,6 +183,9 @@ export default {
       }),
       formattedDate: computed(() => {
         return AppState.activeTowerEvent.createdAt.toLocaleDateString()
+      }),
+      isCancelled: computed(() => {
+        return AppState.activeTowerEvent.isCanceled
       }),
       
 
@@ -258,4 +262,21 @@ export default {
 .comment-card{
   width: 75%;
 }
+
+.tower-name{
+  width: 20ch;
+  white-space: wrap;
+  
+  text-overflow: ellipsis;
+}
+
+.cover-img{
+  height: 50vh;
+  width:  50vw;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 5px;
+  border-top: 5px;
+}
+
 </style>
