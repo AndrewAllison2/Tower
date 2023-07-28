@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <h1 class="ms-2 mt-2">Tower</h1>
+      <h1 class="mt-2">Tower</h1>
       <div class="col-12 col-md-11 m-auto bg bg-info rounded elevation-4">
         
         <div v-if="towerEvent" class="row">

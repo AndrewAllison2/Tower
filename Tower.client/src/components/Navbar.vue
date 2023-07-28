@@ -10,7 +10,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav me-auto">
+      <ul class="navbar-nav m-auto">
         <!-- <li>
           <button :hidden="!account.id" type="button" class="btn text-light fs-5" data-bs-toggle="modal" data-bs-target="#exampleModal">Create Event</button>
         </li> -->

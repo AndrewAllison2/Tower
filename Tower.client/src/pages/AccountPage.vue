@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <h1 class="ms-2 mt-2">Tower</h1>
+      <h1 class="mt-2">Tower</h1>
       <h4 class="text-center mt-4">My Events</h4>
       <div class="col-12 col-md-3">
       </div>
@@ -10,11 +10,11 @@
 
 <!-- for every event where user id == creator id, draw the event card -->
 
-      </div>
+      
     
 
-    <div class="row">
-      <div class="col-12 col-md-8 m-auto">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8">
         <div class="" v-for="ticket in myTickets" :key="ticket.id" :towerEvent="ticket.event">
           <!-- <div class="card elevation-4 p-2 card-container mt-3">
             <img class="img-fluid event-cover-img" :src="towerEvent.coverImg" alt="">
@@ -25,6 +25,7 @@
           <MyEventsCard :towerEventProp="ticket.event" :ticketProp="ticket"/>
         </div>
       </div>
+    </div>
     </div>
   
 </template>
