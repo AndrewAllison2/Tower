@@ -4,6 +4,8 @@ This template is designed to help kickstart a project that utilizes <a href="htt
 
 The first thing you will need to provide is in the `.env` file. You will need to supply the port, Auth0 credentials, and mongoDb connectionstring. These environment variables are used throughout the template, so be sure to add them in when moving into production as well.
 
+Changes
+
 **_.env_**
 
 ```
