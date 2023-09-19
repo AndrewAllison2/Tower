@@ -25,7 +25,7 @@
   </div>
 
   <!-- SECTION EVENT CARDS -->
-  <div class="row">
+  <div class="row py-1">
     <div class="col-12 col-md-3 mb-3" v-for="towerEvent in towerEvents" :key="towerEvent.id">
         <EventCard :towerEventProp="towerEvent" />
     </div>
