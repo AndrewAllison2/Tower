@@ -3,7 +3,7 @@
     <div class="row">
       <h1 class="mt-2">Tower</h1>
       <div class="col-12 col-md-11 m-auto bg bg-info rounded elevation-4">
-        
+
         <div v-if="towerEvent" class="row">
           <div  class="col-12 col-md-6">
             <img  class='img-fluid cover-img p-3' :src="towerEvent.coverImg" alt="picture here">
@@ -13,9 +13,9 @@
             <div>
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <i v-if="hasTicket" class="mdi mdi-ticket text-success fs-1" title="You have a ticket for this event!"></i>
-              
+
                 <div class="dropdown">
-                  <button v-if="towerEvent.creatorId == account.id && !towerEvent.isCanceled" class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Tower Options">
+                  <button v-if="towerEvent.creatorId == account.id && !towerEvent?.isCanceled" class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Tower Options">
                     <i class="mdi mdi-cancel"></i>
                   </button>
                   <ul  class="dropdown-menu">
@@ -25,7 +25,7 @@
                 </div>
               </div>
               </div>
-            
+
             <div class="d-flex justify-content-between align-items-center">
               <h4 class="tower-name">{{towerEvent.name }}</h4>
               <h5>{{ formattedDate }}</h5>
@@ -39,7 +39,7 @@
               <div>
 
 
-                
+
                 <div v-if="isCancelled == true">
                   <h4 class="text-danger" >Cancelled</h4>
                 </div>
@@ -51,8 +51,8 @@
                       <h4>No Tickets Remaining</h4>
                     </div>
                   </div>
-                
-                
+
+
 
             </div>
           </div>
@@ -93,7 +93,7 @@
             </div>
           </div>
         </div>
-        
+
       </div>
     </div>
     </div>
@@ -117,10 +117,10 @@ export default {
   props: {
     towerEventProp: {type: TowerEvent}
   },
-  
+
   setup() {
     const editable = ref({})
-    
+
     const route = useRoute()
 
     async function getEventById(){
@@ -154,11 +154,11 @@ export default {
       getEventById()
       getCommentsByEventId()
       getTicketsByEventId()
-      
+
     })
 
     onUpdated(() => {
-      
+
     })
 
 
@@ -185,9 +185,9 @@ export default {
         return AppState.activeTowerEvent.createdAt.toLocaleDateString()
       }),
       isCancelled: computed(() => {
-        return AppState.activeTowerEvent.isCanceled
+        return AppState.activeTowerEvent?.isCanceled
       }),
-      
+
 
       async cancelTowerEvent() {
         try {
@@ -197,7 +197,7 @@ export default {
             return
           }
           const eventId = this.towerEvent.id
-          
+
           await towerEventsService.cancelTowerEvent(eventId)
         } catch (error) {
           Pop.error(error.message)
@@ -206,7 +206,7 @@ export default {
 
       async createTicket() {
         try {
-          
+
           const activeTowerId = route.params.eventId
         const ticketData = {eventId: activeTowerId}
 
@@ -234,7 +234,7 @@ export default {
           if (!wantsToRemove) {
             return
           }
-          
+
           await commentsService.removeComment(commentId)
         } catch (error) {
           Pop.error(error.message)
@@ -266,7 +266,7 @@ export default {
 .tower-name{
   width: 20ch;
   white-space: wrap;
-  
+
   text-overflow: ellipsis;
 }
 

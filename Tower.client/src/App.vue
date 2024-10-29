@@ -33,6 +33,6 @@ export default {
 
 
 main{
-  background-color: #5c3daa;
+  background-image: url('https://images.pexels.com/photos/220182/pexels-photo-220182.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
 }
 </style>

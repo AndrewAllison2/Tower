@@ -57,7 +57,7 @@ export default {
     })
     return {
       filterBy,
-      
+
       towerEvents: computed(() => {
         if (filterBy.value == '') {
           return AppState.towerEvents
