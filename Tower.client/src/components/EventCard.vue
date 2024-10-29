@@ -38,6 +38,7 @@ export default {
   position: relative;
   justify-content: center;
   align-items: center;
+  box-shadow: 1px 2px 5px 2px rgb(0, 174, 255);
 
 }
 .card-info{
